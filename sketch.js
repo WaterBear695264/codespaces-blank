@@ -19,7 +19,7 @@ class Vector{
     }
 
     distance(vec){
-        return Math.sqrt((vec.x-this.x)^2 + (vec.y - this.y)^2)
+        return Math.sqrt(((vec.x-this.x)**2) + ((vec.y - this.y)**2))
     }
 
     add(vec){
@@ -36,7 +36,7 @@ class Vector{
     }
 
     scale(m){
-        return new Vector(this.x*m, this.y/m);
+        return new Vector(this.x*m, this.y*m);
     }
 }
 
@@ -50,7 +50,7 @@ class Prokaryotic{
         this.power = power;
         this.health = health;
         this.speed = speed;
-        this.target;
+        this.target = 0;
     }
 
     divide(arr){
@@ -68,7 +68,10 @@ class Prokaryotic{
                 id = i;
             }
         }
-        this.target = id;
+        if(this.target === undefined){
+            this.target = id;
+        }
+
     }
 
     show(){
@@ -77,9 +80,14 @@ class Prokaryotic{
     }
 
     detectFood(arr){
-        if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)){
-            this.fperc += arr[i].saturation;
-            arr = arr.slice(0, i) + arr.slice(i+1);
+        console.log("asdf", arr[this.target].pos, this.pos, arr[this.target].pos.distance(this.pos))
+        console.log("fghj", arr[this.target].pos.distance(this.pos), (this.width/2 + arr[this.target].radius))
+        if(arr[this.target].pos.distance(this.pos) < (this.width/2 + arr[this.target].radius)){
+            this.fperc += arr[this.target].saturation;
+            let arr1 = arr.slice(0, this.target);
+            let arr2 = arr.slice(this.target+1);
+            arr = []
+            console.log(this.target, arr, arr1.concat(arr2))
         }
     }
 
@@ -88,12 +96,14 @@ class Prokaryotic{
     }
 
     goToFood(arr){
-        console.log("wheeee", arr[this.target].pos.subtract(this.pos))
+
+        // console.log("wheeee", arr[this.target].pos.subtract(this.pos).normalize().scale(this.speed))
         let direction = arr[this.target].pos.subtract(this.pos).normalize().scale(this.speed);
         this.move(direction);
     }
 
     update(foodArr, prokaryoticArray){
+        // console.log(this.pos)
         this.findFood(foodArr);
         this.goToFood(foodArr);
         this.detectFood(foodArr);
@@ -127,14 +137,14 @@ function drawFood(arr){
 
 function setup(){
     createCanvas(800, 800);
-    foodArray = startingFood(10)
+    foodArray = startingFood(10);
     v = new Vector(3, 4);
-    cell = new Prokaryotic(new Vector(100, 100), new Vector(0, 0), 50, 50, 50, 50, 50);
+    cell = new Prokaryotic(new Vector(100, 100), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
 }
 
 function draw(){
+    console.log("check", foodArray)
     background(255);
     cell.update(foodArray, cellArray)
-    console.log()
     drawFood(foodArray);
 }

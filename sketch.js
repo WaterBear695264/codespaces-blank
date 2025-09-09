@@ -62,10 +62,6 @@ class Prokaryotic{
         arr.push(prok)
     }
 
-    fixShit(arr){
-        console.log(this.target)
-        this.fperc = Math.min(100, this.fperc)
-    }
 
     findFood(arr){
         let temp = Infinity;
@@ -99,7 +95,7 @@ class Prokaryotic{
             foodArray = arr1.concat(arr2)
             this.target = undefined;
             console.log(this.target, arr, arr1.concat(arr2))
-        }
+            }
         }
 
     }
@@ -117,9 +113,17 @@ class Prokaryotic{
 
     }
 
+    fixStuff(foodArr, CellArr){
+        console.log(this.target)
+        this.fperc = Math.min(100, this.fperc)
+        if(foodArr[this.target] === undefined){
+            this.findFood(foodArr)
+        }
+    }
+
     update(foodArr, prokaryoticArray){
         // console.log(this.pos)
-        this.fixShit();
+        this.fixStuff(foodArr, prokaryoticArray);
         this.findFood(foodArr);
         this.goToFood(foodArr);
         this.detectFood(foodArr);
@@ -154,7 +158,6 @@ function drawFood(arr){
 function setup(){
     createCanvas(800, 800);
     foodArray = startingFood(10);
-    v = new Vector(3, 4);
     cell = new Prokaryotic(new Vector(100, 100), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
     cell2 = new Prokaryotic(new Vector(400, 400), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
 }

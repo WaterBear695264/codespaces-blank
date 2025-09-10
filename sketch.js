@@ -41,11 +41,10 @@ class Vector{
 }
 
 class Prokaryotic{
-    constructor(pos, vel, width, height, fperc, power, health, speed){
+    constructor(pos, vel, radius, fperc, power, health, speed){
         this.pos = pos;
         this.vel = vel;
-        this.width = width;
-        this.height = height;
+        this.radius = radius
         this.fperc = fperc;
         this.power = power;
         this.health = health;
@@ -55,11 +54,12 @@ class Prokaryotic{
 
     divide(arr){
         let baseRand = Math.random();
-        if(fperc === 100){
-
+        if(this.fperc === 100){
+            this.fperc = 50;
+            let prok = new Prokaryotic(new Vector(this.pos.x + this.radius*2, this.pos.y), this.vel.scale(1), this.radius, 50, 50, 50, 0)
+            arr.push(prok)
         }
-        let prok = new Prokaryotic(new Vector(this.pos.x + this.radius*2, this.pos.y), this.vel.scale(-1), this.width, this.height, 50, 50, 50, 50)
-        arr.push(prok)
+
     }
 
 
@@ -72,15 +72,21 @@ class Prokaryotic{
                 id = i;
             }
         }
-        if(this.target === undefined){
             this.target = id;
-        }
 
     }
 
-    show(){
+    cellCollision(arr){
+
+    }
+
+    show(img){
         fill(150)
-        ellipse(this.pos.x, this.pos.y, this.width, this.height);
+        ellipse(this.pos.x, this.pos.y, this.radius, this.radius);
+        // beginClip();
+        // circle(this.pos.x, this.pos.y, this.width)
+        // endClip();
+        // image(img, this.pos.x, this.pos.y, this.width, this.width)
     }
 
     detectFood(arr){
@@ -88,7 +94,7 @@ class Prokaryotic{
         // console.log("fghj", arr[this.target].pos.distance(this.pos), (this.width/2 + arr[this.target].radius))
         console.log(arr[0] !== undefined)
         if(arr[0] !== undefined){
-            if(arr[this.target].pos.distance(this.pos) < (this.width/2 + arr[this.target].radius)){
+            if(arr[this.target].pos.distance(this.pos) < (this.radius/2 + arr[this.target].radius)){
             this.fperc += arr[this.target].saturation;
             let arr1 = arr.slice(0, this.target);
             let arr2 = arr.slice(this.target+1);
@@ -116,18 +122,20 @@ class Prokaryotic{
     fixStuff(foodArr, CellArr){
         console.log(this.target)
         this.fperc = Math.min(100, this.fperc)
+        this.vel = this.vel.scale(0.98)
         if(foodArr[this.target] === undefined){
             this.findFood(foodArr)
         }
     }
 
-    update(foodArr, prokaryoticArray){
+    update(foodArr, prokaryoticArray, img){
         // console.log(this.pos)
         this.fixStuff(foodArr, prokaryoticArray);
         this.findFood(foodArr);
         this.goToFood(foodArr);
         this.detectFood(foodArr);
-        this.show();
+        this.divide(prokaryoticArray);
+        this.show(img);
     }
 
 }
@@ -151,21 +159,47 @@ function startingFood(x){
 
 function drawFood(arr){
     for(let i = 0; i < arr.length; i++){
-        foodArray[i].show();
+        arr[i].show();
     }
+}
+
+function startingCells(x, radius, speed){
+    tempArray = [];
+    for(let i = 0; i < x; i++){
+        tempArray.push(new Prokaryotic(new Vector(random(0, 800), random(0, 800)), new Vector(0, 0), radius, 50, 50, 50, speed));
+    }
+    return tempArray
+}
+
+function updateCells(prokArr, fArr, img){
+    for(let i = 0; i < prokArr.length; i++){
+        prokArr[i].update(fArr, prokArr, img);
+    }
+}
+
+let img;
+// Load the image.
+function preload() {
+  img = loadImage('asdf.jpeg');
+
 }
 
 function setup(){
     createCanvas(800, 800);
-    foodArray = startingFood(10);
-    cell = new Prokaryotic(new Vector(100, 100), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
-    cell2 = new Prokaryotic(new Vector(400, 400), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
+    imageMode(CENTER);
+    foodArray = startingFood(1000);
+    cellArray = startingCells(10, 20, 0.5)
+    // cell = new Prokaryotic(new Vector(100, 100), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
+    // cell2 = new Prokaryotic(new Vector(400, 400), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
 }
 
 function draw(){
-    console.log("check", foodArray)
     background(255);
-    cell.update(foodArray, cellArray)
-    cell2.update(foodArray, cellArray)
+    push();
+    console.log("check", cellArray)
+    // cell.update(foodArray, cellArray, img);
+    // cell2.update(foodArray, cellArray, img);
+    updateCells(cellArray, foodArray, img);
     drawFood(foodArray);
+    pop();
 }

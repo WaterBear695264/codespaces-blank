@@ -3,7 +3,7 @@ class Food{
         this.pos = pos;
         this.saturation = saturation;
         this.radius = radius;
-        this.color = (random(0, 255), random(0, 255), random(0, 255))
+        this.color = (random(255), random(255), random(255))
     }
 
     show(){
@@ -41,7 +41,7 @@ class Vector{
 }
 
 class Prokaryotic{
-    constructor(pos, vel, radius, fperc, power, health, speed){
+    constructor(pos, vel, radius, fperc, power, health, speed, color){
         this.pos = pos;
         this.vel = vel;
         this.radius = radius
@@ -50,13 +50,14 @@ class Prokaryotic{
         this.health = health;
         this.speed = speed;
         this.target;
+        this.color = color;
     }
 
     divide(arr){
         let baseRand = Math.random();
         if(this.fperc === 100){
             this.fperc = 50;
-            let prok = new Prokaryotic(new Vector(this.pos.x + this.radius*2, this.pos.y), this.vel.scale(-1), this.radius, 50, 50, 50, 3)
+            let prok = new Prokaryotic(new Vector(this.pos.x + this.radius*2, this.pos.y), this.vel.scale(-1), this.radius, 50, 50, 50, 3, this.color)
             arr.push(prok)
         }
 
@@ -86,7 +87,7 @@ class Prokaryotic{
     }
 
     show(img){
-        fill(150)
+        fill(this.color)
         ellipse(this.pos.x, this.pos.y, this.radius, this.radius);
         // beginClip();
         // circle(this.pos.x, this.pos.y, this.width)
@@ -188,7 +189,7 @@ function drawFood(arr){
 function startingCells(x, radius, speed){
     tempArray = [];
     for(let i = 0; i < x; i++){
-        tempArray.push(new Prokaryotic(new Vector(random(0, 800), random(0, 800)), new Vector(0, 0), radius, 50, 50, 50, speed));
+        tempArray.push(new Prokaryotic(new Vector(random(0, 800), random(0, 800)), new Vector(0, 0), radius, 50, 50, 50, speed, (random(255), random(255), random(255))));
     }
     return tempArray
 }

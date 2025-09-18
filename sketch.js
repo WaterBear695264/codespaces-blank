@@ -185,7 +185,7 @@ class ProkHunter extends Organism{
             this.fperc += arr[this.target].fperc/5;
             let arr1 = arr.slice(0, this.target);
             let arr2 = arr.slice(this.target+1);
-            prokHunterArray = arr1.concat(arr2)
+            cellArray = arr1.concat(arr2)
             // console.log(this.target, arr, arr1.concat(arr2))
             }
         }

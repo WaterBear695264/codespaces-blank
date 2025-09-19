@@ -54,23 +54,6 @@ class Organism{
         this.alive = true;
     }
     
-
-    divide(arr){
-        if(this.fperc === 100){
-            this.fperc = 50;
-            let rand= random(-10, 10)
-            console.log("yah", rand)
-            let rad = Math.max(1, this.radius + (rand/5))
-            let zoom = this.speed - rand/10
-            let pow = this.power+rand
-
-
-            let prok = new Organism(new Vector(this.pos.x + this.radius, this.pos.y), this.vel.scale(-1), rad, 50, pow, 50, zoom, this.color)
-            arr.push(prok)
-        }
-
-    }
-
     findFood(arr){
         let temp = Infinity;
         let id = 0;
@@ -104,7 +87,6 @@ class Organism{
 
     goToFood(arr){
         let ran = random(0, 200)
-        console.log(Math.floor(ran));
         if(arr[this.target] !== undefined && Math.floor(ran) === 55){
             // console.log(this.target, arr[this.target])
             let direction = arr[this.target].pos.subtract(this.pos).normalize().scale(this.speed);
@@ -115,8 +97,8 @@ class Organism{
 
     dead(cellArr){
         if(this.fperc <= 0 || this.health <= 0){
-            this.color(0, 0, 0)
-            // this.speed = 0;
+            this.color = color(0, 0, 0)
+            this.speed = 0;
             this.alive = false;
         }
     }
@@ -128,6 +110,23 @@ class Prokaryotic extends Organism{
         super(pos, vel, radius, fperc, power, health, speed, color);
     }
 
+    divide(arr){
+        if(this.fperc === 100){
+            this.fperc = 50;
+            let rand= random(-10, 10)
+            console.log("yah", rand)
+            let rad = Math.max(1, this.radius + (rand/5))
+            let zoom = this.speed - rand/10
+            let pow = this.power+rand
+
+
+            let prok = new Prokaryotic(new Vector(this.pos.x + this.radius, this.pos.y), this.vel.scale(-1), rad, 50, pow, 50, zoom, this.color)
+            arr.push(prok)
+        }
+
+    }
+
+
     detectFood(arr){
         // console.log("asdf", arr[this.target].pos, this.pos, arr[this.target].pos.distance(this.pos))
         // console.log("fghj", arr[this.target].pos.distance(this.pos), (this.width/2 + arr[this.target].radius))
@@ -135,9 +134,7 @@ class Prokaryotic extends Organism{
         if(arr[0] !== undefined){
             if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2){
             this.fperc += arr[this.target].saturation;
-            let arr1 = arr.slice(0, this.target);
-            let arr2 = arr.slice(this.target+1);
-            foodArray = arr1.concat(arr2)
+            let foodRemoved = foodArray.splice(this.target, 1)
             // console.log(this.target, arr, arr1.concat(arr2))
             }
         }
@@ -183,9 +180,10 @@ class ProkHunter extends Organism{
         if(arr[0] !== undefined){
             if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2 && this.power>arr[this.target].power){
             this.fperc += arr[this.target].fperc/5;
-            let arr1 = arr.slice(0, this.target);
-            let arr2 = arr.slice(this.target+1);
-            cellArray = arr1.concat(arr2)
+            // let arr1 = arr.slice(0, this.target);
+            // let arr2 = arr.slice(this.target+1);
+            let removedHunters = cellArray.splice(this.target, 1);
+            // cellArray = arr.splice(this.target, 1);
             // console.log(this.target, arr, arr1.concat(arr2))
             }
         }
@@ -201,6 +199,22 @@ class ProkHunter extends Organism{
         if(foodArr[this.target] === undefined){
             this.findFood(foodArr)
         }
+    }
+
+    divide(arr){
+        if(this.fperc === 100){
+            this.fperc = 50;
+            let rand= random(-10, 10)
+            console.log("yah", rand)
+            let rad = Math.max(1, this.radius + (rand/5))
+            let zoom = this.speed - rand/10
+            let pow = this.power+rand
+
+
+            let prok = new ProkHunter(new Vector(this.pos.x + this.radius, this.pos.y), this.vel.scale(-1), rad, 50, pow, 50, zoom, this.color)
+            arr.push(prok)
+        }
+
     }
 
     update(foodArr, hunterArray, img){
@@ -224,6 +238,73 @@ class ProkHunter extends Organism{
 
 }
 
+class Terminator extends Organism{
+    constructor(pos, vel, radius, fperc, power, health, speed, color){
+        super(pos, vel, radius, fperc, power, health, speed, color);
+    }
+
+    detectFood(arr){
+        // console.log("asdf", arr[this.target].pos, this.pos, arr[this.target].pos.distance(this.pos))
+        // console.log("fghj", arr[this.target].pos.distance(this.pos), (this.width/2 + arr[this.target].radius))
+        // console.log(arr[0] !== undefined)
+        if(arr[0] !== undefined){
+            if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2 && this.power>arr[this.target].power){
+            console.log("myyyyy hearts a sterio")
+            this.fperc += arr[this.target].fperc/5;
+            this.health -= arr[this.target].power/10
+            // let arr1 = arr.slice(0, this.target);
+            // let arr2 = arr.slice(this.target+1);
+            let ProkHunterRemoved = prokHunterArray.splice(this.target, 1);
+            // cellArray = arr.splice(this.target, 1);
+            // console.log(this.target, arr, arr1.concat(arr2))
+            }
+        }
+
+    }
+
+    fixStuff(foodArr, CellArr){
+        // console.log(this.target)
+        this.pos.x = clamp(this.pos.x, 0, 800);
+        this.pos.y = clamp(this.pos.y, 0, 800);
+        this.fperc = Math.min(100, this.fperc)
+        this.vel = this.vel.scale(0.98)
+        if(foodArr[this.target] === undefined){
+            this.findFood(foodArr)
+        }
+    }
+
+    divide(arr){
+        if(this.fperc === 100){
+            this.fperc = 50;
+            let rand= random(-10, 10)
+            console.log("yah", rand)
+            let rad = Math.max(1, this.radius + (rand/5))
+            let zoom = this.speed - rand/10
+            let pow = this.power+rand
+
+
+            let prok = new Terminator(new Vector(this.pos.x + this.radius, this.pos.y), this.vel.scale(-1), rad, 50, pow, 50, zoom, this.color)
+            arr.push(prok)
+        }
+
+    }
+
+    update(foodArr, hunterArray, img){
+        // console.log(this.pos)
+
+        this.fperc-=0.005
+        this.fixStuff(foodArr, hunterArray);
+        this.findFood(foodArr);
+        this.goToFood(foodArr);
+        this.detectFood(foodArr);
+        // this.cellCollision(prokaryoticArray)
+        this.divide(hunterArray);
+        this.pos = this.pos.add(this.vel)
+        this.dead(hunterArray);
+        this.show(img);
+    }
+}
+
 function getRandomInt(min, max) {
   const minCeiled = Math.ceil(min);
   const maxFloored = Math.floor(max);
@@ -238,6 +319,7 @@ function clamp(value, min, max) {
 let foodArray = [];
 let cellArray = [];
 let prokHunterArray = [];
+let terminatorArray = [];
 
 function startingFood(x){
     let tempArray = [];
@@ -264,7 +346,15 @@ function startingCells(x, radius, speed){
 function startingPreds(x, radius, speed){
     let tempArray = [];
     for(let i = 0; i < x; i++){
-        tempArray.push(new ProkHunter(new Vector(random(0, 800), random(0, 800)), new Vector(0, 0), radius, 50, 100, 50, speed, color(136, 8, 8)));
+        tempArray.push(new ProkHunter(new Vector(random(0, 800), random(0, 800)), new Vector(0, 0), radius, 50, 100, 50, speed, color(57, 255, 20)));
+    }
+    return tempArray
+}
+
+function startingTerms(x, radius, speed){
+    let tempArray = [];
+    for(let i = 0; i < x; i++){
+        tempArray.push(new Terminator(new Vector(random(0, 800), random(0, 800)), new Vector(0, 0), radius, 50, 200, 50, speed, color(136, 8, 8)));
     }
     return tempArray
 }
@@ -298,7 +388,8 @@ function setup(){
     imageMode(CENTER);
     // foodArray = startingFood(1000);
     cellArray = startingCells(10, 20, 5)
-    prokHunterArray = startingPreds(1, 50, 2)
+    prokHunterArray = startingPreds(2, 50, 2)
+    terminatorArray = startingTerms(1, 70, 0.3)
     // cell = new Prokaryotic(new Vector(100, 100), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
     // cell2 = new Prokaryotic(new Vector(400, 400), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
 }
@@ -314,5 +405,6 @@ function draw(){
     updateCells(cellArray, foodArray, img);
     drawFood(foodArray);
     updateCells(prokHunterArray, cellArray, img);
+    updateCells(terminatorArray, prokHunterArray, img);
     pop();
 }

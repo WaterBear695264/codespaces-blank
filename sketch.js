@@ -317,18 +317,21 @@ class Asteroid{
         if(this.countdown > 100 && this.countdown % 10 === 0){
             textSize(40)
             text("asteroid incoming", 400, 400)
+            circle(this.pos.x, this.pos.y, this.blastRadius)
         }
     }
 
     show(){
-        if(this.countdown <= 0 && this.countdown > -100){
+       /* if(this.countdown <= 0 && this.countdown > -100){
             if(this.countdown % 8 === 0){
                 background(255, 0, 0)
             }else{
                 background(255, 255, 255)
             }
 
-        }
+        } */
+
+            
     }
 
     
@@ -336,7 +339,8 @@ class Asteroid{
     dealDamage(array){
         if(this.countdown === 0){
             for(let i = 0; i < array.length; i++){
-                if(this.pos.distance(array[i].pos) < this.blastRadius){
+                console.log("wekjrh;alewjr;laksdjf", this.pos.distance(array[i].pos), (this.blastRadius + array[i].radius))
+                if(this.pos.distance(array[i].pos) < (this.blastRadius + array[i].radius)){
                     let removed = array.splice(i, 1)
                 }
             }
@@ -369,7 +373,7 @@ let foodArray = [];
 let cellArray = [];
 let prokHunterArray = [];
 let terminatorArray = [];
-let asty = new Asteroid(new Vector(100, 100), 100, 100);
+let asty = new Asteroid(new Vector(100, 100), 100, 1000);
 
 function startingFood(x){
     let tempArray = [];
@@ -437,7 +441,7 @@ function setup(){
     createCanvas(800, 800);
     imageMode(CENTER);
     textAlign(CENTER, CENTER);
-    // foodArray = startingFood(1000);
+    foodArray = startingFood(100);
     cellArray = startingCells(10, 20, 5)
     prokHunterArray = startingPreds(2, 50, 2)
     terminatorArray = startingTerms(1, 70, 0.3)
@@ -457,6 +461,6 @@ function draw(){
     drawFood(foodArray);
     updateCells(prokHunterArray, cellArray, img);
     updateCells(terminatorArray, prokHunterArray, img);
-    asty.update(cellArray, prokHunterArray, terminatorArray);
+    //asty.update(cellArray, prokHunterArray, terminatorArray);
     pop();
 }

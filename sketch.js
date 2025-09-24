@@ -132,7 +132,7 @@ class Prokaryotic extends Organism{
         // console.log("fghj", arr[this.target].pos.distance(this.pos), (this.width/2 + arr[this.target].radius))
         // console.log(arr[0] !== undefined)
         if(arr[0] !== undefined){
-            if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2){
+            if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2 && this.alive){
             this.fperc += arr[this.target].saturation;
             let foodRemoved = foodArray.splice(this.target, 1)
             // console.log(this.target, arr, arr1.concat(arr2))
@@ -178,7 +178,7 @@ class ProkHunter extends Organism{
         // console.log("fghj", arr[this.target].pos.distance(this.pos), (this.width/2 + arr[this.target].radius))
         // console.log(arr[0] !== undefined)
         if(arr[0] !== undefined){
-            if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2 && this.power>arr[this.target].power){
+            if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2 && this.power>arr[this.target].power && this.alive){
             this.fperc += arr[this.target].fperc/5;
             // let arr1 = arr.slice(0, this.target);
             // let arr2 = arr.slice(this.target+1);
@@ -221,9 +221,6 @@ class ProkHunter extends Organism{
         // console.log(this.pos)
 
         this.fperc-=0.02
-        if(this.alive){
-            this.health += 0.01
-        }
 
         this.fixStuff(foodArr, hunterArray);
         this.findFood(foodArr);
@@ -248,7 +245,7 @@ class Terminator extends Organism{
         // console.log("fghj", arr[this.target].pos.distance(this.pos), (this.width/2 + arr[this.target].radius))
         // console.log(arr[0] !== undefined)
         if(arr[0] !== undefined){
-            if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2 && this.power>arr[this.target].power){
+            if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2 && this.power>arr[this.target].power && this.alive){
             console.log("myyyyy hearts a sterio")
             this.fperc += arr[this.target].fperc/5;
             // let arr1 = arr.slice(0, this.target);
@@ -313,22 +310,40 @@ class Asteroid{
     }
 
     warning(){
-        if(this.countdown > 100 && this.countdown % 10 === 0){
+        if(this.countdown > 1 && this.countdown % 10 === 0){
             textSize(40)
             text("asteroid incoming", 400, 400)
-            circle(this.pos.x, this.pos.y, this.blastRadius)
         }
     }
 
-    show(){
-       /* if(this.countdown <= 0 && this.countdown > -100){
+    shootAway(array){
+        for(let i = 0; i < array.length; i++){
+            array[i].vel = array[i].vel.add(array[i].pos.subtract(this.pos).normalize().scale(50));
+        }
+    }
+
+    show(prok, hunt, term){
+    if(this.countdown < 50 && this.countdown > 25){
+        circle(this.pos.x, this.pos.y, this.blastRadius + this.countdown*50 - 1250);
+    }
+
+    if(this.countdown === 24){
+        this.shootAway(prok);
+        this.shootAway(hunt);
+        this.shootAway(term);
+    }
+
+    if(this.countdown <= 0 && this.countdown > -100){
             if(this.countdown % 8 === 0){
                 background(255, 0, 0)
             }else{
                 background(255, 255, 255)
             }
 
-        } */
+        } 
+    if(this.countdown <= -100 && this.countdown > -200){
+        circle(this.pos.x, this.pos.y, this.blastRadius + Math.abs(this.countdown)-100)
+    }
 
             
     }
@@ -336,11 +351,11 @@ class Asteroid{
     
 
     dealDamage(array){
-        if(this.countdown === 0){
+        if(this.countdown === 25){
             for(let i = 0; i < array.length; i++){
                 console.log("wekjrh;alewjr;laksdjf", this.pos.distance(array[i].pos), (this.blastRadius + array[i].radius)/2)
-                if(this.pos.distance(array[i].pos) < (this.blastRadius + array[i].radius)){
-                    let removed = array.splice(i, 1)
+                if(this.pos.distance(array[i].pos) < (this.blastRadius + array[i].radius)/2){
+                     array[i].health = 0;
                 }
             }
         }
@@ -350,7 +365,7 @@ class Asteroid{
     update(proks, hunters, terms){
         this.countdown -= 1;
         this.warning();
-        this.show();
+        this.show(proks, hunters, terms);
         this.dealDamage(proks);
         this.dealDamage(hunters);
         this.dealDamage(terms);
@@ -372,7 +387,7 @@ let foodArray = [];
 let cellArray = [];
 let prokHunterArray = [];
 let terminatorArray = [];
-let asty = new Asteroid(new Vector(100, 100), 100, 1000);
+// let asty = new Asteroid(new Vector(100, 100), 100, 1000);
 
 function startingFood(x){
     let tempArray = [];

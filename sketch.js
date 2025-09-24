@@ -251,7 +251,6 @@ class Terminator extends Organism{
             if(arr[this.target].pos.distance(this.pos) < (this.radius + arr[this.target].radius)/2 && this.power>arr[this.target].power){
             console.log("myyyyy hearts a sterio")
             this.fperc += arr[this.target].fperc/5;
-            this.health -= arr[this.target].power/10
             // let arr1 = arr.slice(0, this.target);
             // let arr2 = arr.slice(this.target+1);
             let ProkHunterRemoved = prokHunterArray.splice(this.target, 1);
@@ -339,7 +338,7 @@ class Asteroid{
     dealDamage(array){
         if(this.countdown === 0){
             for(let i = 0; i < array.length; i++){
-                console.log("wekjrh;alewjr;laksdjf", this.pos.distance(array[i].pos), (this.blastRadius + array[i].radius))
+                console.log("wekjrh;alewjr;laksdjf", this.pos.distance(array[i].pos), (this.blastRadius + array[i].radius)/2)
                 if(this.pos.distance(array[i].pos) < (this.blastRadius + array[i].radius)){
                     let removed = array.splice(i, 1)
                 }
@@ -444,7 +443,7 @@ function setup(){
     foodArray = startingFood(100);
     cellArray = startingCells(10, 20, 5)
     prokHunterArray = startingPreds(2, 50, 2)
-    terminatorArray = startingTerms(1, 70, 0.3)
+    terminatorArray = startingTerms(1, 70, 0.5)
     // cell = new Prokaryotic(new Vector(100, 100), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
     // cell2 = new Prokaryotic(new Vector(400, 400), new Vector(0, 0), 50, 50, 50, 50, 50, 2);
 }
@@ -461,6 +460,6 @@ function draw(){
     drawFood(foodArray);
     updateCells(prokHunterArray, cellArray, img);
     updateCells(terminatorArray, prokHunterArray, img);
-    //asty.update(cellArray, prokHunterArray, terminatorArray);
+    asty.update(cellArray, prokHunterArray, terminatorArray);
     pop();
 }

@@ -307,6 +307,7 @@ class Asteroid{
         this.damage = damage;
         this.blastRadius = blastRadius;
         this.countdown = 300;
+        this.active = false;
     }
 
     warning(){
@@ -324,7 +325,8 @@ class Asteroid{
 
     show(prok, hunt, term){
     if(this.countdown < 50 && this.countdown > 25){
-        circle(this.pos.x, this.pos.y, this.blastRadius + this.countdown*50 - 1250);
+        fill(123, 123, 123)
+        circle(this.pos.x, this.pos.y, this.blastRadius + this.countdown*100 - 2500);
     }
 
     if(this.countdown === 24){
@@ -333,18 +335,16 @@ class Asteroid{
         this.shootAway(term);
     }
 
-    if(this.countdown <= 0 && this.countdown > -100){
-            if(this.countdown % 8 === 0){
-                background(255, 0, 0)
-            }else{
-                background(255, 255, 255)
-            }
-
-        } 
-    if(this.countdown <= -100 && this.countdown > -200){
+    if(this.countdown <= 10 && this.countdown > -200){
+        fill(0, 0, 0)
         circle(this.pos.x, this.pos.y, this.blastRadius + Math.abs(this.countdown)-100)
     }
 
+    if(this.countdown <= 10 && this.countdown > -100){
+                let c = color(255, 255, 255)
+                c.setAlpha(255 + this.countdown * 2.55)
+                background(c)
+    } 
             
     }
 
@@ -363,12 +363,17 @@ class Asteroid{
     }
 
     update(proks, hunters, terms){
-        this.countdown -= 1;
-        this.warning();
-        this.show(proks, hunters, terms);
-        this.dealDamage(proks);
-        this.dealDamage(hunters);
-        this.dealDamage(terms);
+        if(this.active){
+            this.countdown -= 1;
+            this.warning();
+            this.show(proks, hunters, terms);
+            this.dealDamage(proks);
+            this.dealDamage(hunters);
+            this.dealDamage(terms);
+        }else if(Math.floor(random(100)) === 50){
+            this.active = true
+        }
+
     }
 }
 
@@ -387,7 +392,7 @@ let foodArray = [];
 let cellArray = [];
 let prokHunterArray = [];
 let terminatorArray = [];
-// let asty = new Asteroid(new Vector(100, 100), 100, 1000);
+let asty = new Asteroid(new Vector(100, 100), 100, 1000);
 
 function startingFood(x){
     let tempArray = [];

@@ -370,7 +370,7 @@ class Asteroid{
             this.dealDamage(proks);
             this.dealDamage(hunters);
             this.dealDamage(terms);
-        }else if(Math.floor(random(100)) === 50){
+        }else if(Math.floor(random(10000)) === 50){
             this.active = true
         }
 

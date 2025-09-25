@@ -4,6 +4,7 @@ class Food{
         this.saturation = saturation;
         this.radius = radius;
         this.color = color(random(255), random(255), random(255))
+        this.vel = new Vector(0, 0)
     }
 
     show(){
@@ -143,8 +144,8 @@ class Prokaryotic extends Organism{
     
     fixStuff(foodArr, CellArr){
         // console.log(this.target)
-        this.pos.x = clamp(this.pos.x, 0, 800);
-        this.pos.y = clamp(this.pos.y, 0, 800);
+        this.pos.x = clamp(this.pos.x, this.radius/2, 800-this.radius/2);
+        this.pos.y = clamp(this.pos.y, this.radius/2, 800-this.radius/2);
         this.fperc = Math.min(100, this.fperc)
         this.vel = this.vel.scale(0.98)
         if(foodArr[this.target] === undefined){
@@ -192,8 +193,8 @@ class ProkHunter extends Organism{
 
     fixStuff(foodArr, CellArr){
         // console.log(this.target)
-        this.pos.x = clamp(this.pos.x, 0, 800);
-        this.pos.y = clamp(this.pos.y, 0, 800);
+        this.pos.x = clamp(this.pos.x, this.radius/2, 800-this.radius/2);
+        this.pos.y = clamp(this.pos.y, this.radius/2, 800-this.radius/2);
         this.fperc = Math.min(100, this.fperc)
         this.vel = this.vel.scale(0.98)
         if(foodArr[this.target] === undefined){
@@ -260,8 +261,8 @@ class Terminator extends Organism{
 
     fixStuff(foodArr, CellArr){
         // console.log(this.target)
-        this.pos.x = clamp(this.pos.x, 0, 800);
-        this.pos.y = clamp(this.pos.y, 0, 800);
+        this.pos.x = clamp(this.pos.x, this.radius/2, 800-this.radius/2);
+        this.pos.y = clamp(this.pos.y, this.radius/2, 800-this.radius/2);
         this.fperc = Math.min(100, this.fperc)
         this.vel = this.vel.scale(0.98)
         if(foodArr[this.target] === undefined){

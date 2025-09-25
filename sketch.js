@@ -311,9 +311,16 @@ class Asteroid{
     }
 
     warning(){
-        if(this.countdown > 1 && this.countdown % 10 === 0){
-            textSize(40)
-            text("asteroid incoming", 400, 400)
+        let on = true;
+        if(this.countdown > 25 && this.countdown % 20 === 0){
+            if(on){
+                textSize(40)
+                text("asteroid incoming", 400, 400)
+                on = false
+            }else{
+                on = true
+            }
+
         }
     }
 
@@ -336,7 +343,10 @@ class Asteroid{
     }
 
     if(this.countdown <= 10 && this.countdown > -200){
-        fill(0, 0, 0)
+        let c = color(0, 0, 0)
+        c.setAlpha(120+(this.countdown/2))
+        fill(c)
+        noStroke()
         circle(this.pos.x, this.pos.y, this.blastRadius + Math.abs(this.countdown)-100)
     }
 
@@ -370,7 +380,13 @@ class Asteroid{
             this.dealDamage(proks);
             this.dealDamage(hunters);
             this.dealDamage(terms);
+            if(this.countdown <= -200){
+                this.active = false
+                this.countdown = 300
+            }
         }else if(Math.floor(random(10000)) === 50){
+            this.pos = new Vector(random(800), random(800))
+            this.blastRadius = random(100, 500)
             this.active = true
         }
 

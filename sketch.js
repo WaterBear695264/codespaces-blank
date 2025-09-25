@@ -327,7 +327,7 @@ class Asteroid{
 
     shootAway(array){
         for(let i = 0; i < array.length; i++){
-            array[i].vel = array[i].vel.add(array[i].pos.subtract(this.pos).normalize().scale(50));
+            array[i].vel = array[i].vel.add(array[i].pos.subtract(this.pos).normalize().scale(51));
         }
     }
 
